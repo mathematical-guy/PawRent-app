@@ -6,16 +6,18 @@ import '../models/pet.dart';
 
 class PetService {
   APIConstants api = APIConstants();
+  HttpConstants httpConstants = HttpConstants();
 
-  dynamic getPetListService() async {
+  Future<List<Pet>> getPetListService() async {
+    List<Pet> pets = [];
     var url = api.baseUrl + api.petListUrl;
     url = "http://10.0.2.2:8000/app/pet-list/";
-    var response = await get(Uri.parse(url));
-    if (response.statusCode == HttpConstants().successStatusCode) {
-      List<Pet> pets = [];
-      for (var element in jsonDecode(response.body)) {
-        var value = Pet.fromJson(element);
-        pets.add(value);
+    Response response = await get(Uri.parse(url));
+    if (response.statusCode == httpConstants.successStatusCode) {
+      List pet_list = jsonDecode(response.body);
+      for (var i = 0; i < pet_list.length; i++) {
+        Pet p = Pet.fromJson(pet_list[i]);
+        pets.add(p);
       }
       return pets;
     } else {
